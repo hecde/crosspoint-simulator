@@ -10,6 +10,8 @@ class HWCDC : public Stream {
 public:
   void begin(unsigned long baud) {}
   void setTxTimeoutMs(uint32_t timeoutMs) {}
+  void setRxBufferSize(size_t size) {}
+  void setTxBufferSize(size_t size) {}
   size_t write(uint8_t c) override {
     std::cerr << (char)c;
     return 1;
@@ -20,6 +22,11 @@ public:
   }
   int available() override { return 0; }
   int read() override { return -1; }
+  // Not part of the Stream base (which only declares the 0-arg read()); this
+  // mirrors HardwareSerial's own buffer-read overload. No real input channel
+  // here (stderr-backed sink only, see class comment below), matching
+  // available()==0 / read()==-1 - never anything to read.
+  size_t read(uint8_t *buffer, size_t size) { return 0; }
   int peek() override { return -1; }
   template <typename... Args> void printf(const char *format, Args... args) {
     if constexpr (sizeof...(Args) == 0) {

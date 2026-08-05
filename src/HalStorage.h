@@ -58,6 +58,11 @@ public:
                         HalFile &file);
   bool removeDir(const char *path);
 
+  // No-op here: the simulator has no RTC/SdFat date-time source to wire up
+  // (see HalClock.cpp for the simulator's own steady_clock-based time). Real
+  // firmware uses this to timestamp file writes with wall-clock time.
+  void installDateTimeCallback(const uint8_t *utcOffsetQuarterHoursBiased) {}
+
   static HalStorage &getInstance() { return instance; }
 
   class StorageLock; // private class, used internally
